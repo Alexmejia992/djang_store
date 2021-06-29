@@ -1,7 +1,5 @@
 from jaguarete.models import Product
-from django.contrib.auth import login
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from .forms import Register
 from jaguarete.models import Product
@@ -13,6 +11,9 @@ def home(request):
         'products': products
     }
     return render(request, 'home.html', context)
+
+def prueba(request):
+    return render(request, 'user.html', {})
 
 def about(request):
     return render(request, 'about.html', {})
