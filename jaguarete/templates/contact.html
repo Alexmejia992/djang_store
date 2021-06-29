@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+<style>
+    .container{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }    
+    .card{
+        flex:  auto;
+    }
+</style>
+<div class="main-container">
+<div class="container">
+    <div class="card" style="width: 25rem;">
+            <h5 class="text-center pt-5">Written by <a href="mailto:webmaster@example.com">alexander mejia</a>.</h5>
+            <p class="card-text text-center">Visit us at:</p>
+            <p class="card-text text-center pb-5">exampl.com</p>   
+    </div>
+</div>
+</div>
+
+{% endblock %}

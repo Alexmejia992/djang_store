@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block page_content %}
+<!-- /*<link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
+<div class="container">
+  <h1 class="text-center">Products Index</h1>
+    <hr>
+</div>
+<div class="container-fluid d-flex flex-column flex-md-row " >
+    {% for product in products|slice:":3" %}
+    <div class="card " >
+        <div class="row g-0">
+          <div class="col-md-4 ">
+            <img src="{{product.image}}" class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">{{product.product_name}}</h5>
+                <p class="card-text">{{product.description | slice:'70'}}...</p>
+                <button type="button" class="btn btn-outline-primary">Ver</button>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="container-fluid ">
+  <hr>
+  {% for product in products|dictsortreversed:"create_on"|slice:"3:7" %}
+<div class="list-group ">
+  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1">{{product.product_name}}</h5>
+      <small>{{product.create_on.date}}</small>
+    </div>
+    <p class="mb-1">{{product.description|slice:'50'}}...</p>
+    <small>{{product.category}}</small>
+  </a>
+</div>
+  {% endfor %}
+</div>
+{% endblock%}

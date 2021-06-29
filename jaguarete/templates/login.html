@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_content %}
+<style>
+    .asteriskField{
+      display: none;
+    }
+</style>
+<div class="container col-6 mt-4">
+    <form method="post">
+        <h1>hola mundo</h1>
+        {% csrf_token %}
+        {{form.username|as_crispy_field}}
+        {{form.password|as_crispy_field}}
+        <input type="submit" value="Ingresar">
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_content %}
+<style>
+    .asteriskField{
+      display: none;
+    }
+</style>
+<div class="container col-6 mt-4">
+  <h1>REGISTRARSE EN NUESTRA WEB</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{form.username|as_crispy_field}}
+        {{form.email|as_crispy_field}}
+        {{form.password1|as_crispy_field}}
+        {{form.password2|as_crispy_field}}
+        <input type="submit" value="Registrar">
+    </form>
+</div>
+{% endblock %}
