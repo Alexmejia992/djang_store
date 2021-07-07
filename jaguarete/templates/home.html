@@ -1,11 +1,8 @@
 {% extends 'base.html' %}
-
 {% load static %}
 {% block page_content %}
 <!-- /*<link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
-<div class="container">
-  <h1 class="text-center">Products Index</h1>
-    <hr>
+<div class="container">    <hr>
 </div>
 <div class="container-fluid d-flex flex-column flex-md-row " >
     {% for product in products|slice:":3" %}
@@ -16,26 +13,38 @@
           </div>
           <div class="col-md-8">
             <div class="card-body">
-                <h5 class="card-title">{{product.product_name}}</h5>
-                <p class="card-text">{{product.description | slice:'70'}}...</p>
-                <button type="button" class="btn btn-outline-primary">Ver</button>
+                <h5 class="card-title font-weight-bold">{{product.product_name}}</h5>
+                <p class="card-text">  {{product.description | slice:'70'|safe}}...</p>
+                {% if user.is_superuser %}
+                  <a href="{% url 'update_product' product.pk %}" class="btn btn-outline-primary">Editar</a>
+                {% else %}
+                  {% if user.is_authenticated  %}
+                  <a href="{% url 'view_product' product.pk %}"  class="btn btn-outline-primary">Ver</a>
+                  {% else %}
+                    <a href="{% url 'login' %}"  class="btn btn-outline-primary">Ver</a>
+                    {% endif %}
+                {% endif %}
             </div>
           </div>
         </div>
     </div>
     {% endfor %}
 </div>
-
 <div class="container-fluid ">
   <hr>
   {% for product in products|dictsortreversed:"create_on"|slice:"3:7" %}
 <div class="list-group ">
-  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+  <!-- <a href="{% url 'view_product' product.pk %}" class="list-group-item list-group-item-action flex-column align-items-start"> -->
+  {% if user.is_superuser %}
+    <a href="{% url 'update_product' product.pk %}"  class="list-group-item list-group-item-action flex-column align-items-start">
+  {% else %}
+    <a href="{% url 'view_product' product.pk %}" class="list-group-item list-group-item-action flex-column align-items-start">
+  {% endif %}
     <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1">{{product.product_name}}</h5>
+      <h3 class="mb-1 font-weight-bold">{{product.product_name}}</h3>
       <small>{{product.create_on.date}}</small>
     </div>
-    <p class="mb-1">{{product.description|slice:'50'}}...</p>
+    <p class="mb-1">{{product.description|slice:'50'|safe}}...</p>
     <small>{{product.category}}</small>
   </a>
 </div>

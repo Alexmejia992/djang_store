@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block page_content %}
+<div class="container mt-4">
+  <div class="card mb-3" >
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="{{product.image.url}}" class="img-fluid rounded-start" alt="product image">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h3 class="card-title font-weight-bold">{{product.product_name}}</h3>
+          <a href="#" class="card-text"><p>{{product.category}}</a>
+          <p class="card-text">{{product.description|safe}}</p>
+          <div class="d-flex justify-content-between align-items-baseline">
+            <p class="card-text">$ {{product.price}}</p>
+            <button data-product="{{product.product_name}}"  
+            data-action="add"
+            class="btn btn-success update-cart" href="">Agregar a carrito</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

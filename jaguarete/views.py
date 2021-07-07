@@ -1,64 +1,74 @@
-from jaguarete.models import Product
-from django.contrib import messages
+from django.contrib.auth import authenticate, login
+from django.http import request
 from django.shortcuts import render, redirect
-from .forms import Register
+from django.views.generic import UpdateView, ListView, DetailView
+from django.urls import reverse_lazy
+from django.db.models import Q
+from .forms import NewProductForm, RegisterForm
 from jaguarete.models import Product
 
-# Create your views here.
-def home(request):
-    products = Product.objects.all().order_by('-create_on')
-    context = {
-        'products': products
-    }
-    return render(request, 'home.html', context)
 
-def prueba(request):
-    return render(request, 'user.html', {})
+from django.conf import settings
+from importlib import import_module
+
+class Home(ListView):
+    model = Product
+    template_name = 'home.html'
+    context_object_name = 'products'
+    queryset = Product.objects.all().order_by('-create_on')
 
 def about(request):
     return render(request, 'about.html', {})
+
+def new_product(request):
+    form = NewProductForm()
+    if request.method == 'POST':
+        # print('Printing', request.POST)
+        form = NewProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+        else:
+            print('no es valido')
+    context ={'form': form}
+    return render(request, 'new_product.html', context)
+
+class UpdateProduct(UpdateView):
+    model = Product
+    template_name = 'new_product.html'
+    form_class = NewProductForm
+    success_url = reverse_lazy('home')
+    
+class ViewProduct(DetailView):
+    model = Product
+    template_name = 'view_product.html'
+    context_object_name = 'product'
 
 def contact(request):
     return render(request, 'contact.html', {})
 
 def register(request):
     if request.method == 'POST':
-        form = Register(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
-            if request.user.is_authenticated(): #Mensaje de autenticación
-                messages.info(request, 'Hola mundoooo')
-            username = form.cleaned_data['username']
+            new_user = form.save()
+            new_user = authenticate(username=form.cleaned_data['username'],password=form.cleaned_data['password1'])
+            login(request, new_user)
             return redirect('home')
     else:
-        form = Register()
-
+        form = RegisterForm()
     return render(request, 'register.html', {'form': form})
-# def register(request):
-#     if request.method == 'GET':
-#         return render(
-#             request, 'register.html',
-#             {'form': Register}
-#         )
-#     elif request.method == 'POST':
-#             form = Register(request.POST)
-#             if form.is_valid():
-#                 user = form.save()
-#                 login =(request, user)
-#                 return redirect(reverse("home"))
-#                 body={
-#                     'email': form.cleaned_data['email00'],
-#                     'user': form.cleaned_data['user'],
-#                     'password': form.cleaned_data['password'],
-#                 }
 
-    #         message = '\n'.join(body.values())
+def search(request):
+    if request.method == 'POST':
+        searched = request.POST.get('searched')
+        searched_category = Product.objects.filter(Q(product_name__contains=searched) |
+        Q(category__category_name__contains=searched))
+        return render(request, 'search.html', {'searched': searched, 'searched_category': searched_category})
+    else:
+        return render(request, 'search.html', {})
 
-    #         try:
-    #             send_mail(message, 'alexmejia992gmail.com', ['alexmejia992gmail.com'])
-    #         except BadHeaderError:
-    #             return HttpResponse('Invalid header found.')
-    #         return redirect ('home')
+def cart(request):
+    return render(request, 'cart.html', {})
 
-    # form = Register()
-    # return render(request, 'register.html', {'form':form})
+

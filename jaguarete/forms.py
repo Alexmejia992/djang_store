@@ -1,17 +1,26 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import User
+from django.db.models import fields
+from django.forms.models import ModelForm 
+from .models import Product
 
-class Register(UserCreationForm):
+class NewProductForm(ModelForm):
+    class Meta:
+        model = Product
+        fields = '__all__'
+        widgets = {
+            'image_file': forms.FileInput(attrs={'accept': 'image/*'}),
+        }
+
+class RegisterForm(UserCreationForm):
     email = forms.EmailField()
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirmar Contraseña', widget=forms.PasswordInput)
 
     class Meta(UserCreationForm.Meta):   
         model = User
-        fields = ['username', 'email', 'password1', 'password2']        
+        fields = ['username', 'email', 'password1', 'password2']
         
-        # help_texts= { k:"" for k in fields }
-        # email_address = forms.CharField(max_length=50)
-        # user_name = forms.CharField(max_length=50)
-        # password = forms.CharField(max_length=50)
+
+

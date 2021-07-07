@@ -9,7 +9,7 @@
 </style>
 <div class="container col-6 mt-4">
   <h1>REGISTRARSE EN NUESTRA WEB</h1>
-    <form method="post">
+    <form method="POST">
         {% csrf_token %}
         {{form.username|as_crispy_field}}
         {{form.email|as_crispy_field}}

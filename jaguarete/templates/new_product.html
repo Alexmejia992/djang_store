@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<style>
+    .asteriskField{
+      display: none;
+    }
+</style>
+
+<div class="container col-6 mt-4">
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.media}}
+        {{form.product_name|as_crispy_field}}
+        {{form.category|as_crispy_field}}
+        {{form.image|as_crispy_field}}
+        {{form.price|as_crispy_field}}
+        {{form.description|as_crispy_field}}
+        {{ form.errors}} 
+        <input type="submit" value="Registrar">
+    </form>
+</div>
+{% endblock %}

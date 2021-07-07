@@ -5,7 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  
+  <script>
+    window.CSRF_TOKEN = "{{ csrf_token }}"
+  </script>
+  <script>
+    const user = '{{request.user}}'
+  </script>
   <title>Document</title>
   <style>
 
@@ -20,12 +25,6 @@
        padding-bottom: 3%;
      }
      nav{height: 50px;}
-     /*footer{
-       height: 50px;
-       width: 100%;
-       position: absolute;
-       bottom: 0;
-     }*/
    </style>
 </head>
 <body>
@@ -37,9 +36,20 @@
           <img src="{% static 'images/internet.svg' %}" class="rounded" style="height: 50px" alt="logo">
         </div>
         <div class="" role="group" aria-label="Basic example">
-          <a class="btn btn-primary" href="{% url 'login' %}" role="button">Login</a>
-          <a class="btn btn-primary" href="{% url 'register' %}" role="button">Registro</a>
-          <a class="btn btn-primary" href="#" role="button">Carrito</a>
+          {% if user.is_authenticated %}
+          
+          <a class="alert alert-primary mr-4" role="alert">
+              Hola, {{user}}
+          </a>
+          <a class="btn btn-secondary" href="{% url 'logout' %}" role="button">Logout</a>
+
+          {% else%}
+            <a class="btn btn-primary" href="{% url 'login' %}" role="button">Login</a>
+            <a class="btn btn-primary" href="{% url 'register' %}" role="button">Registro</a>
+          {% endif %}
+          {% if user.is_authenticated != user.is_superuser %}
+            <a class="btn btn-primary" href="{% url 'cart' %}" role="button">Carrito</a>
+          {% endif %}   
         </div>
       </div>
     </div>
@@ -53,38 +63,42 @@
           <li class="nav-item active">
             <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="">Categorias</a>
-          </li>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Dropdown button
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              {% for product in products %}
+              <a class="dropdown-item" href="#">
+                {% ifchanged %}
+                  {{product.category}}
+                {% endifchanged %}
+              </a>       
+              {% endfor %}
+            </div>
+          </div>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'about' %}">Acerca De...</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'contact' %}">Contacto</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" mailto= "alexmejia992@gmail.com">Nuevo Producto</a>
-          </li>
-          {% comment %} <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Dropdown
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </li> {% endcomment %}
-
+          {% if user.is_superuser %}
+            {% block page %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'new_product' %}">Nuevo Producto</a>
+              </li>
+            {% endblock %}
+          {% endif %}
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <form class="form-inline my-2 my-lg-0" method="POST"
+        action="{% url 'search'%}">
+          {% csrf_token %}
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="searched">
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
       </div>
     </nav>
-
     {% block page_content %}
     {% endblock %}
     <footer class="text-center text-lg-start">
@@ -97,9 +111,9 @@
       <!-- Copyright -->
     </footer>
   </div>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+  <!-- <script src="{% static 'javascript/app.js' %}"></script -->
 </body>
 </html>
  

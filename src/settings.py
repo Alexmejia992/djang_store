@@ -33,7 +33,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'crispy_bootstrap5',
-    'jaguarete'
+    'ckeditor',
+    'jaguarete',
 ]
 
 # CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
     # },
 ]
 
-
+# AUTHENTICATION_BACKENDS = 'django.contrib.auth.backends.ModelBackend'
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -127,11 +127,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+# MEDIA_URL = '/images/'
 
 STATIC_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'images/')
+#
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
